@@ -6,7 +6,8 @@ import random
 import math
 
 # Characters for printing ordered by brightness I got from Paul Bourke
-brightness = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
+#brightness = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
+brightness = " -.:=*+#%@"
 
 # Noise Class
 class Noise:
@@ -27,11 +28,28 @@ class Noise:
         return grid_display
 
     # Populate grid
-    def fill_grid(self, scale=4):
+    def fill_grid(self, frequency=4, amplitude=2):
         length = len(self.__grid)
         width = len(self.__grid[0])
 
         # Create permutation table
+        max_length = length*width
+        permutations = [i for i in range(max_length)]
+        random.shuffle(permutations)
+    
+        # Create Influence Vectors
+        influence_vectors = []
+        i_length = math.ceil(length/frequency)
+        i_width = math.ceil(width/frequency)
+        for x in range(i_length):
+            # Add a new row
+            influence_vectors.append([])
+            for y in range(i_width):
+                # Assign x, y, and z to a random number between 0 and 1
+                vector_x = permutations[x * i_length + y] / max_length
+                vector_y = permutations[x * i_length + y + 1] / max_length
+                vector_z = permutations[x * i_length + y + 2] / max_length
+                influence_vectors[x].append((vector_x, vector_y, vector_z))
 
         for x in range(length):
             for y in range(width):
