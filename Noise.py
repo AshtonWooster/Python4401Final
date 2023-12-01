@@ -89,7 +89,7 @@ class Noise:
                 total = total_top * (1 - y_top / frequency) + total_bottom * (1 + y_bottom / frequency)
 
                 # Amplify extremes, using abs to get around issues with roots of negative numbers
-                current_layer[x][y] = (math.pow(abs(total), amplification)+1)/2 * amplitude * (abs(total) / total)
+                current_layer[x][y] = total != 0 and (math.pow(abs(total), amplification)+1)/2 * amplitude * (abs(total) / total) or 0
         
         # Find total scaling for all octaves
         total_scaling = 1
