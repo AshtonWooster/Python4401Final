@@ -55,6 +55,10 @@ class Noise:
     def set_grid(self, grid):
         self.__grid = grid
 
+    # Function to get the grid
+    def get_grid(self):
+        return self.__grid
+
     # Returns a grid with perlin noise from 0-amplitude
     def noise(self, frequency=10, octaves=1, amplitude=1, persistence=2, amplification=(1/3)):
         length = len(self.__grid[0])
@@ -90,7 +94,7 @@ class Noise:
 
 
                 # Amplify extremes, using abs to get around issues with roots of negative numbers
-                current_layer[x][y] = total != 0 and (math.pow(abs(total), amplification)+1)/2 * amplitude * (abs(total) / total) or 0
+                current_layer[x][y] = total != 0 and (math.pow(abs(total), amplification) * (abs(total) / total) + 1)/2 * amplitude or 0
         
         # Find total scaling for all octaves
         total_scaling = 1
@@ -102,5 +106,6 @@ class Noise:
         for x in range(width):
             for y in range(length):
                 current_layer[x][y] = (current_layer[x][y] + next_layer[x][y]/persistence) / (total_scaling)
+
         
         return current_layer
