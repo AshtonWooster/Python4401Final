@@ -5,7 +5,7 @@ import random
 import math
 
 # Characters for printing ordered by brightness I got from Paul Bourke
-#brightness = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
+# brightness = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
 brightness = " -.:=+o#%@"
 
 # Function that returns influence vectors for a grid
@@ -60,7 +60,7 @@ class Noise:
         return self.__grid
 
     # Returns a grid with perlin noise from 0-amplitude
-    def noise(self, frequency=10, octaves=1, amplitude=1, persistence=2, amplification=(1/3)):
+    def noise(self, frequency=10, octaves=1, amplitude=1, persistence=2, amplification=(4/5)):
         length = len(self.__grid[0])
         width = len(self.__grid)
         current_layer = [[0]*length for _ in range(width)]
@@ -92,17 +92,16 @@ class Noise:
                 total_bottom = bottom_left * (1 - x_left / frequency) + bottom_right * (1 + x_right / frequency)
                 total = total_top * (1 - y_top / frequency) + total_bottom * (1 + y_bottom / frequency)
 
-
                 # Amplify extremes, using abs to get around issues with roots of negative numbers
-                current_layer[x][y] = total != 0 and (math.pow(abs(total), amplification) * (abs(total) / total) + 1)/2 * amplitude or 0
-        
+                current_layer[x][y] = total != 0 and (math.pow(abs(total), amplification) * amplitude * (abs(total) / total) + 1) / 2 or 0
+    
         # Find total scaling for all octaves
         total_scaling = 1
         for i in range(octaves-1):
             total_scaling += math.pow(persistence, -(i+1))
 
         # Recursively fill grid to add octaves
-        next_layer = self.noise(frequency, octaves-1, amplitude)
+        next_layer = self.noise(frequency, octaves-1, amplitude, persistence, amplification)
         for x in range(width):
             for y in range(length):
                 current_layer[x][y] = (current_layer[x][y] + next_layer[x][y]/persistence) / (total_scaling)
